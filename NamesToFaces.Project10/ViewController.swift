@@ -63,6 +63,8 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
         collectionView.reloadData()
         
         dismissViewControllerAnimated(true, completion: nil)
+        
+        save()
     }
     
     func getDocumentsDirectory() -> NSString {
@@ -109,9 +111,16 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
             person.name = newName.text!
             
             self.collectionView.reloadData()
+            self.save()
         })
         
         presentViewController(ac, animated: true, completion: nil)
+    }
+    
+    func save() {
+        let savedData = NSKeyedArchiver.archivedDataWithRootObject(people)
+        let defaults = NSUserDefaults.standardUserDefaults()
+        defaults.setObject(savedData, forKey: "people")
     }
 }
 
