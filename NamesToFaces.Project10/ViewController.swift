@@ -19,6 +19,12 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
         // Do any additional setup after loading the view, typically from a nib.
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "addNewPerson")
+        
+        let defaults = NSUserDefaults.standardUserDefaults()
+        
+        if let savedPeople = defaults.objectForKey("people") as? NSData {
+            people = NSKeyedUnarchiver.unarchiveObjectWithData(savedPeople) as! [Person]
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -63,6 +69,8 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
         collectionView.reloadData()
         
         dismissViewControllerAnimated(true, completion: nil)
+        
+        save()
     }
     
     func getDocumentsDirectory() -> NSString {
@@ -109,9 +117,16 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
             person.name = newName.text!
             
             self.collectionView.reloadData()
+            self.save()
         })
         
         presentViewController(ac, animated: true, completion: nil)
+    }
+    
+    func save() {
+        let savedData = NSKeyedArchiver.archivedDataWithRootObject(people)
+        let defaults = NSUserDefaults.standardUserDefaults()
+        defaults.setObject(savedData, forKey: "people")
     }
 }
 
